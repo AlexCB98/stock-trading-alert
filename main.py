@@ -4,17 +4,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-STOCK_ENDPOINT = 'NVDA'
-NEWS_ENDPOINT = 'https://newsapi.org/v2/everything'
-API_KEY = os.environ.get('ALPHA_VANTAGE_API_KEY')
+STOCK_SYMBOL = 'NVDA'
+STOCK_API_KEY = os.environ.get('ALPHA_VANTAGE_API_KEY')
 
+news_url = 'https://newsapi.org/v2/everything'
 stock_url = 'https://www.alphavantage.co/query'
 
 stock_parameters = {
     'function': 'TIME_SERIES_DAILY',
-    'symbol': STOCK_ENDPOINT,
+    'symbol': STOCK_SYMBOL,
     'outputsize': 'compact',
-    'apikey': API_KEY,
+    'apikey': STOCK_API_KEY,
 }
 
 response = requests.get(
@@ -39,7 +39,7 @@ diff = latest_close - previous_close
 percentage_diff = round(diff / previous_close * 100, 2)
 
 if abs(percentage_diff) > 5:
-    print(f'{STOCK_ENDPOINT} changed by {percentage_diff}')
+    print(f'{STOCK_SYMBOL} changed by {percentage_diff}')
 
 
 
