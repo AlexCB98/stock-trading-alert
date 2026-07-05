@@ -5,10 +5,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 STOCK_SYMBOL = 'NVDA'
+COMPANY_NAME = 'NVIDIA'
+
 STOCK_API_KEY = os.environ.get('ALPHA_VANTAGE_API_KEY')
 NEWS_API_KEY = os.environ.get('NEWS_API_KEY')
-
-news_url = 'https://newsapi.org/v2/everything'
 
 def get_stock_data():
     stock_url = 'https://www.alphavantage.co/query'
@@ -20,20 +20,37 @@ def get_stock_data():
         'apikey': STOCK_API_KEY,
     }
 
-    response = requests.get(
+    stock_response = requests.get(
         url=stock_url,
         params=stock_parameters,
     )
-    response.raise_for_status()
-    data = response.json()
+    stock_response.raise_for_status()
+    data = stock_response.json()
 
     return data
 
+def get_news_data():
+    news_url = 'https://newsapi.org/v2/everything'
 
-data = get_stock_data()
+    news_parameters = {
+        'apiKey': NEWS_API_KEY,
+        'qInTitle': COMPANY_NAME,
+    }
 
-stock_name = data['Meta Data']['2. Symbol']
-daily_data = data['Time Series (Daily)']
+    news_response = requests.get(
+        url=news_url,
+        params=news_parameters,
+    )
+    news_response.raise_for_status()
+    data = news_response.json()
+
+    return data
+
+news_data = get_news_data()
+stock_data = get_stock_data()
+
+stock_name = stock_data['Meta Data']['2. Symbol']
+daily_data = stock_data['Time Series (Daily)']
 
 dates = list(daily_data.keys())
 latest_date = dates[0]
@@ -42,12 +59,13 @@ previous_date = dates[1]
 latest_close = float(daily_data[latest_date]['4. close'])
 previous_close = float(daily_data[previous_date]['4. close'])
 
-
 diff = latest_close - previous_close
 percentage_diff = round(diff / previous_close * 100, 2)
 
-if abs(percentage_diff) > 5:
-    print(f'{STOCK_SYMBOL} changed by {percentage_diff}')
+articles = news_data['articles']
+
+if abs(percentage_diff) > 1:
+    print(articles)
 
 
 
