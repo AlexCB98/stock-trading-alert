@@ -20,20 +20,24 @@ response = requests.get(
     params=parameters,
 )
 response.raise_for_status()
-
 data = response.json()
 
 stock_name = data['Meta Data']['2. Symbol']
-
 daily_data = data['Time Series (Daily)']
 
 dates = list(daily_data.keys())
-
 latest_date = dates[0]
 previous_date = dates[1]
-
 latest_close = float(daily_data[latest_date]['4. close'])
 previous_close = float(daily_data[previous_date]['4. close'])
+
+
+diff = latest_close - previous_close
+percentage_diff = round(diff / previous_close * 100, 2)
+
+if abs(percentage_diff) > 5:
+    print(f'{STOCK} changed by {percentage_diff}')
+
 
 
 
