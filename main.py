@@ -6,23 +6,31 @@ load_dotenv()
 
 STOCK_SYMBOL = 'NVDA'
 STOCK_API_KEY = os.environ.get('ALPHA_VANTAGE_API_KEY')
+NEWS_API_KEY = os.environ.get('NEWS_API_KEY')
 
 news_url = 'https://newsapi.org/v2/everything'
-stock_url = 'https://www.alphavantage.co/query'
 
-stock_parameters = {
-    'function': 'TIME_SERIES_DAILY',
-    'symbol': STOCK_SYMBOL,
-    'outputsize': 'compact',
-    'apikey': STOCK_API_KEY,
-}
+def get_stock_data():
+    stock_url = 'https://www.alphavantage.co/query'
 
-response = requests.get(
-    url=stock_url,
-    params=stock_parameters,
-)
-response.raise_for_status()
-data = response.json()
+    stock_parameters = {
+        'function': 'TIME_SERIES_DAILY',
+        'symbol': STOCK_SYMBOL,
+        'outputsize': 'compact',
+        'apikey': STOCK_API_KEY,
+    }
+
+    response = requests.get(
+        url=stock_url,
+        params=stock_parameters,
+    )
+    response.raise_for_status()
+    data = response.json()
+
+    return data
+
+
+data = get_stock_data()
 
 stock_name = data['Meta Data']['2. Symbol']
 daily_data = data['Time Series (Daily)']
